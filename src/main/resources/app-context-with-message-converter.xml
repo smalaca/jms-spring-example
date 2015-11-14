@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://127.0.0.1:61616" />
+    </bean>
+
+    <bean id="personMessageConverter" class="com.smalaca.jms.messageconverter.PersonMessageConverter"/>
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="receiveTimeout" value="10000" />
+        <property name="defaultDestinationName" value="messageQueue2" />
+        <property name="messageConverter" ref="personMessageConverter" />
+    </bean>
+
+    <bean id="jmsProducer" class="com.smalaca.jms.producer.JmsProducerWithGatewaySupport">
+        <property name="jmsTemplate" ref="jmsTemplate" />
+    </bean>
+
+    <bean id="jmsConsumer" class="com.smalaca.jms.consumer.JmsConsumerWithGatewaySupport">
+        <property name="jmsTemplate" ref="jmsTemplate" />
+    </bean>
+</beans>
